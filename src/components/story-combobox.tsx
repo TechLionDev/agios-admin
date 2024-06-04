@@ -23,45 +23,45 @@ import { Skeleton } from "./ui/skeleton";
 
 const pb = new PocketBase("https://agios-calendar.pockethost.io");
 pb.autoCancellation(false);
-function CopticDateCombobox({value, setValue}) {
-  type CopticDate = {
-    label: string;
-    value: string;
-    month: string;
-    day: string;
+function StoryCombobox({ value, setValue }) {
+  type Story = {
     id: string;
-    gregorianDate: string;
+    title: string;
+    story: string;
+    icons: string[];
+    highlights: string[];
+    value: string;
+    label: string;
   };
-  async function getCopticDates() {
-    let records = await pb.collection("copticDate").getFullList({
+  async function getStories() {
+    let records = await pb.collection("stories").getFullList({
       sort: "-created"
     });
     for (let record of records) {
-      record.value = `${record.month} ${record.day}`;
-      record.label = `${record.month} ${record.day}`;
+      record.value = record.title;
+      record.label = record.title;
     }
-    return records as unknown as CopticDate[];
+    return records as unknown as Story[];
   }
   const [open, setOpen] = React.useState(false);
 
   const [loading, setLoading] = React.useState(true);
-  const [copticDates, setCopticDates] = React.useState<CopticDate[]>([]);
+  const [stories, setStories] = React.useState<Story[]>([]);
   React.useEffect(() => {
     (async () => {
-      const copticDates = await getCopticDates();
-      // TODO: Default to today
-      setCopticDates(copticDates);
+      const stories = await getStories();
+      setStories(stories);
       setLoading(false);
-      console.log(copticDates);
+      console.log(stories);
     })();
   }, []);
 
   if (loading) {
     return (
       <>
-        <Skeleton className="inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 justify-between"/>
+        <Skeleton className='inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 justify-between' />
       </>
-    )
+    );
   }
 
   return (
@@ -74,34 +74,37 @@ function CopticDateCombobox({value, setValue}) {
           className='justify-between'
         >
           {value
-            ? copticDates.find((copticDate) => copticDate.value === value)
-                ?.label
-            : "Select Coptic Date..."}
+            ? `${value.length} Stories Selected...`
+            : "Select Story..."}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='p-0'>
         <Command>
-          <CommandInput  placeholder='Search Coptic Dates...' />
+          <CommandInput placeholder='Search Stories...' />
           <CommandList>
-            <CommandEmpty>No Coptic Date found.</CommandEmpty>
+            <CommandEmpty>No Story found.</CommandEmpty>
             <CommandGroup>
-              {copticDates.map((copticDate) => (
+              {stories.map((story) => (
                 <CommandItem
-                  key={copticDate.value}
-                  value={copticDate.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                  key={story.value}
+                  value={story.value}
+                  onSelect={(currentValue: any) => {
+                    let temp = value;
+                    temp.push(currentValue);
+                    setValue(temp);
                     setOpen(false);
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === copticDate.value ? "opacity-100" : "opacity-0"
+                      value.find((v) => v === story.value)
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
-                  {copticDate.label}
+                  {story.label}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -112,4 +115,4 @@ function CopticDateCombobox({value, setValue}) {
   );
 }
 
-export default CopticDateCombobox;
+export default StoryCombobox;

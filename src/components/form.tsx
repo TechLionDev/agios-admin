@@ -21,11 +21,13 @@ import { Calendar } from "./ui/calendar";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import IconCombobox from "./icon-combobox";
+import StoryCombobox from "./story-combobox";
 
 function OccasionForm() {
   const [date, setDate] = useState<Date>();
   const [copticDate, setCopticDate] = useState();
   const [icons, setIcons] = useState([]);
+  const [stories, setStories] = useState([]);
   const [creating, setCreating] = useState(false);
   async function createOccasion(e: any) {
     e.preventDefault();
@@ -33,6 +35,7 @@ function OccasionForm() {
     const form = e.target;
     const formData = new FormData(form);
     const name = formData.get("name") as string;
+    const liturgicalInfo = formData.get("liturgicalInfo") as string;
     if (!name) {
       setCreating(false);
       alert("Please enter a name for the occasion");
@@ -58,16 +61,28 @@ function OccasionForm() {
       alert("Please select an icon for the occasion");
       return;
     }
+    if (stories.length === 0) {
+      setCreating(false);
+      alert("Please select a story for the occasion");
+      return;
+    }
+    if (liturgicalInfo === "") {
+      setCreating(false);
+      alert("Please enter liturgical information for the occasion");
+      return;
+    }
     console.log({
       name,
       date,
+      liturgicalInfo,
       copticDate,
-      icons
+      icons,
+      stories
     });
   }
   return (
     <form onSubmit={createOccasion} className='w-full'>
-      <div className='flex flex-col flex-wrap gap-8 w-fit'>
+      <div className='grid grid-rows-3 grid-cols-3 gap-8 w-fit'>
         <div className='flex flex-col gap-2'>
           <Label htmlFor='name'>Occasion Name</Label>
           <Input
@@ -75,6 +90,15 @@ function OccasionForm() {
             name='name'
             type='text'
             placeholder='Occasion Name'
+          />
+        </div>
+        <div className='flex flex-col gap-2'>
+          <Label htmlFor='liturgicalInfo'>Liturgical Information</Label>
+          <Input
+            id='liturgicalInfo'
+            name='liturgicalInfo'
+            type='text'
+            placeholder='Liturgical Information'
           />
         </div>
         <div className='flex flex-col gap-2'>
@@ -109,6 +133,10 @@ function OccasionForm() {
         <div className='flex flex-col gap-2'>
           <Label htmlFor='icon'>Icon</Label>
           <IconCombobox value={icons} setValue={setIcons} />
+        </div>
+        <div className='flex flex-col gap-2'>
+          <Label htmlFor='stories'>Stories</Label>
+          <StoryCombobox value={stories} setValue={setStories} />
         </div>
       </div>
       <div className='flex justify-end'>
