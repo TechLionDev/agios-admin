@@ -26,8 +26,8 @@ import StoryCombobox from "./story-combobox";
 function OccasionForm() {
   const [date, setDate] = useState<Date>();
   const [copticDate, setCopticDate] = useState();
-  const [icons, setIcons] = useState([]);
-  const [stories, setStories] = useState([]);
+  const [icons, setIcons] = useState<any>([]);
+  const [stories, setStories] = useState<any>([]);
   const [creating, setCreating] = useState(false);
   async function createOccasion(e: any) {
     e.preventDefault();
@@ -71,14 +71,61 @@ function OccasionForm() {
       alert("Please enter liturgical information for the occasion");
       return;
     }
+
+    for (let i = 0; i < icons.length; i++) {
+      icons[i] = (
+        await pb.collection("icons").getFullList({
+          filter: 'caption = "' + icons[i] + '"'
+        })
+      )[0].id;
+    }
+
+    for (let i = 0; i < stories.length; i++) {
+      stories[i] = (
+        await pb.collection("stories").getFullList({
+          filter: 'title = "' + stories[i] + '"'
+        })
+      )[0].id;
+    }
+
+    const data = {
+      name: name,
+      date: date,
+      copticDate: (
+        await pb.collection("copticDate").getFullList({
+          filter:
+            'month = "' +
+            copticDate.split(" ")[0] +
+            '" && day = "' +
+            copticDate.split(" ")[1] +
+            '"'
+        })
+      )[0].id,
+      icons: icons,
+      liturgicalInformation: liturgicalInfo,
+      stories: stories,
+      facts: [],
+      isWellKnown: true
+    };
     console.log({
       name,
       date,
       liturgicalInfo,
       copticDate,
       icons,
-      stories
+      stories,
+      data
     });
+    const record = await pb.collection("occasion").create(data);
+    if (record) {
+      alert("Occasion created successfully");
+      form.reset();
+      setDate(undefined);
+      setCopticDate(undefined);
+      setIcons([]);
+      setStories([]);
+      setCreating(false);
+    }
   }
   return (
     <form onSubmit={createOccasion} className='w-full'>
