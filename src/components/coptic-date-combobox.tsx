@@ -23,7 +23,7 @@ import { Skeleton } from "./ui/skeleton";
 
 const pb = new PocketBase("https://agios-calendar.pockethost.io");
 pb.autoCancellation(false);
-function CopticDateCombobox({value, setValue}) {
+function CopticDateCombobox({value, setValue}: {value: string, setValue: React.Dispatch<React.SetStateAction<string>>}) {
   type CopticDate = {
     label: string;
     value: string;

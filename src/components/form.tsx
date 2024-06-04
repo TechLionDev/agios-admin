@@ -25,7 +25,7 @@ import StoryCombobox from "./story-combobox";
 
 function OccasionForm() {
   const [date, setDate] = useState<Date>();
-  const [copticDate, setCopticDate] = useState();
+  const [copticDate, setCopticDate] = useState<any>();
   const [icons, setIcons] = useState<any>([]);
   const [stories, setStories] = useState<any>([]);
   const [creating, setCreating] = useState(false);

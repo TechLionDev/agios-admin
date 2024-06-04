@@ -23,7 +23,7 @@ import { Skeleton } from "./ui/skeleton";
 
 const pb = new PocketBase("https://agios-calendar.pockethost.io");
 pb.autoCancellation(false);
-function StoryCombobox({ value, setValue }) {
+function StoryCombobox({ value, setValue }: { value: any, setValue: any }) {
   type Story = {
     id: string;
     title: string;
@@ -99,7 +99,7 @@ function StoryCombobox({ value, setValue }) {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.find((v) => v === story.value)
+                      value.find((v: string) => v === story.value)
                         ? "opacity-100"
                         : "opacity-0"
                     )}

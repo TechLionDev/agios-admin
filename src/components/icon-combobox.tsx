@@ -23,7 +23,7 @@ import { Skeleton } from "./ui/skeleton";
 
 const pb = new PocketBase("https://agios-calendar.pockethost.io");
 pb.autoCancellation(false);
-function IconCombobox({ value, setValue }) {
+function IconCombobox({ value, setValue }: { value: any, setValue: any }) {
   type Icon = {
     caption: string;
     explanation: string;
@@ -105,7 +105,7 @@ function IconCombobox({ value, setValue }) {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.find((v) => v === icon.value) ? "opacity-100" : "opacity-0"
+                      value.find((v: string) => v === icon.value) ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {icon.label}
